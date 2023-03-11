@@ -7,6 +7,13 @@ Shader "Custom/FlagClothShader"
         // we have removed support for texture tiling/offset,
         // so make them not be displayed in material inspector
         [NoScaleOffset] _MainTex ("Texture", 2D) = "white" {}
+        [Toggle(IsAnimatedVertex)] _IsAnimatedVertex("Is Animated Vertex", Int) = 0
+        [Toggle(IsAnimatedUV)] _IsAnimatedUV("Is Animated UV", Int) = 0
+        _Speed ("Speed", Float) = 0
+        _Frequency ("Frequency", Float) = 0
+        _Amplitude ("Amplitude", Float) = 0
+        
+        _UVScrollSpeed ("UV Scroll Speed", Float) = 0
     }
     SubShader
     {
@@ -18,41 +25,60 @@ Shader "Custom/FlagClothShader"
             // use "frag" function as the pixel (fragment) shader
             #pragma fragment frag
 
-            // vertex shader inputs
-            struct appdata
-            {
-                float4 vertex : POSITION; // vertex position
-                float2 uv : TEXCOORD0; // texture coordinate
-            };
+            #pragma multi_compile __ IsAnimatedVertex
+            #pragma multi_compile __ IsAnimatedUV
 
-            // vertex shader outputs ("vertex to fragment")
-            struct v2f
-            {
-                float2 uv : TEXCOORD0; // texture coordinate
-                float4 vertex : SV_POSITION; // clip space position
-            };
+            #include "UnityCG.cginc"
+
+			sampler2D _MainTex;
+			float4 _MainTex_ST;
+
+			struct v2f {
+				float4 pos : SV_POSITION;
+				float2 uv : TEXCOORD0;
+			};
+
+			float _Speed;
+			float _Frequency;
+			float _Amplitude;
+			float _UVScrollSpeed;
+
+            int _IsAnimatedVertex;
+            int _IsAnimatedUV;
 
             // vertex shader
-            v2f vert (appdata v)
+            v2f vert (appdata_base v)
             {
                 v2f o;
-                // transform position to clip space
-                // (multiply with model*view*projection matrix)
-                o.vertex = UnityObjectToClipPos(v.vertex);
-                // just pass the texture coordinate
-                o.uv = v.uv;
+                
+                if(_IsAnimatedVertex > 0)
+                {
+                    v.vertex.y += cos((v.vertex.x + _Time.y * _Speed) * _Frequency) * _Amplitude * (v.vertex.x - 5);
+                }
+
+                o.pos = UnityObjectToClipPos(v.vertex);
+                o.uv = TRANSFORM_TEX(v.texcoord, _MainTex);
+                
                 return o;
             }
             
-            // texture we will sample
-            sampler2D _MainTex;
+            
 
             // pixel shader; returns low precision ("fixed4" type)
             // color ("SV_Target" semantic)
             fixed4 frag (v2f i) : SV_Target
             {
-                // sample texture and return it
-                fixed4 col = tex2D(_MainTex, i.uv);
+
+                float2 uv = i.uv;
+                if(_IsAnimatedUV > 0)
+                {
+                    uv.x += _UVScrollSpeed;
+                }
+                
+                fixed4 col = tex2D(_MainTex, uv);
+
+                
+                
                 return col;
             }
             ENDCG

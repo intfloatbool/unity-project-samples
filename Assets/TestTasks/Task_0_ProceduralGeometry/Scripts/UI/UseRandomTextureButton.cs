@@ -1,25 +1,18 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using Common.Scripts;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.UI;
 
 namespace TestTasks.Task_0_ProceduralGeometry.Scripts.UI
 {
-    [RequireComponent(typeof(Button))]
-    public class UseRandomTextureButton : MonoBehaviour
+    public class UseRandomTextureButton : ButtonHandlerBase
     {
         [SerializeField] private string _textureApiUrl;
         [SerializeField] private MeshRenderer _meshRenderer;
         private static readonly int MainTex = Shader.PropertyToID("_MainTex");
         private UniTask _currentTask;
 
-        private void Awake()
-        {
-            var button = GetComponent<Button>();
-            button.onClick.AddListener(OnClick);
-        }
-
-        private void OnClick()
+        protected override void OnClick()
         {
             if(_currentTask.Status == UniTaskStatus.Pending)
                 return;
