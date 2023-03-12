@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using TestTasks.Task_1_Algorithms_And_DataStructures.Scripts.BusinessLogic;
 using UnityEngine;
@@ -7,11 +8,43 @@ namespace TestTasks.Task_1_Algorithms_And_DataStructures.Scripts
 {
     public class SubwaySystemView : MonoBehaviour
     {
+        [SerializeField] private List<SubwayStationView> _stationViewsList;
+        public IReadOnlyList<SubwayStationView> StationViews => _stationViewsList;
+
         private GenericGraph<SubwayStation> _graph;
+        public GenericGraph<SubwayStation> Graph => _graph;
+        
         private Dictionary<EStationColorType, List<GenericNode<SubwayStation>>> _stationsMap;
+
+        public event Action<SubwayStationView> OnStationClicked; 
+
+        private void OnValidate()
+        {
+            if (_stationViewsList == null || !_stationViewsList.Any())
+                _stationViewsList = FindObjectsOfType<SubwayStationView>().ToList();
+        }
+
         private void Awake()
         {
             (_graph, _stationsMap) = new SubwayGraphCreator().CreateGraph();
+
+            foreach (var stationView in _stationViewsList)
+            {
+                if(!stationView)
+                    continue;
+                stationView.OnClick += OnStationClicked;
+            }
+        }
+
+        private void OnDestroy()
+        {
+            foreach (var stationView in _stationViewsList)
+            {
+                if(!stationView)
+                    continue;
+                
+                stationView.OnClick -= OnStationClicked;
+            }
         }
 
         [ContextMenu("SubwayDebugTest")]
