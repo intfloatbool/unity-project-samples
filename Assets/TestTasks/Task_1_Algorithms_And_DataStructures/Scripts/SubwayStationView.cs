@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Common.Scripts;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
@@ -20,7 +21,7 @@ namespace TestTasks.Task_1_Algorithms_And_DataStructures.Scripts
         
         public event Action<SubwayStationView> OnClick;
 
-        private UniTask _currentHighlightTask;
+        private bool _isAnimatedNow = false;
 
         private void Awake()
         {
@@ -75,23 +76,29 @@ namespace TestTasks.Task_1_Algorithms_And_DataStructures.Scripts
 
         public void Highlight()
         {
-            if(_currentHighlightTask.Status == UniTaskStatus.Pending)
+            if(_isAnimatedNow)
                 return;
+            
             AnimationHighlight().Forget();
         }
 
         private async UniTaskVoid AnimationHighlight()
         {
-            _currentHighlightTask = DOTween.Sequence()
-                .Append(transform.DOScale(Vector3.one * 2f, 0.5f))
-                .Append(_textMesh.DOColor(Color.yellow, 1f))
-                .Append(_textMesh.DOColor(Color.white, 1f))
-                .Append(transform.DOScale(Vector3.one * 1f, 0.5f))
-                .Play().ToUniTask(cancellationToken: gameObject.GetCancellationTokenOnDestroy());
-                
-            await _currentHighlightTask;
+            _isAnimatedNow = true;
+            
+            var selfDestroyToken = gameObject.GetCancellationTokenOnDestroy();
+            var textMeshDestroyToken = _textMesh.gameObject.GetCancellationTokenOnDestroy();
+            
+            await transform.DOScale(Vector3.one * 2f, 0.5f).WithCancellation(selfDestroyToken);
+            await _textMesh.DOColor(Color.yellow, 1f).WithCancellation(textMeshDestroyToken);
+            await _textMesh.DOColor(Color.white, 1f).WithCancellation(textMeshDestroyToken);
+            await transform.DOScale(Vector3.one * 1f, 0.5f).WithCancellation(selfDestroyToken);
+            
+            _isAnimatedNow = false;
+        }
 
-            _currentHighlightTask = default;
+        private void OnDestroy()
+        {
         }
 
         public override string ToString()
