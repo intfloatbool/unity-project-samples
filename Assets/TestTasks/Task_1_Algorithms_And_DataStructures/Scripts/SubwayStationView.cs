@@ -1,5 +1,7 @@
 ﻿using System;
 using Common.Scripts;
+using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using TestTasks.Task_1_Algorithms_And_DataStructures.Scripts.BusinessLogic;
 using TMPro;
 using UnityEngine;
@@ -12,10 +14,13 @@ namespace TestTasks.Task_1_Algorithms_And_DataStructures.Scripts
         public string Label => _label;
 
         [SerializeField] private EStationColorType _colorType;
+        private TextMeshPro _textMesh;
         public EStationColorType ColorType => _colorType;
         
         
         public event Action<SubwayStationView> OnClick;
+
+        private UniTask _currentHighlightTask;
 
         private void Awake()
         {
@@ -58,14 +63,35 @@ namespace TestTasks.Task_1_Algorithms_And_DataStructures.Scripts
                 meshRend.material.SetColor("_Color", color);
             }
 
-            var textMesh = GetComponentInChildren<TextMeshPro>();
-            if (textMesh)
+            _textMesh = GetComponentInChildren<TextMeshPro>();
+            if (_textMesh)
             {
-                textMesh.text = _label;
+                _textMesh.text = _label;
             }
 
             gameObject.name = "STATION_" + ToString();
 
+        }
+
+        public void Highlight()
+        {
+            if(_currentHighlightTask.Status == UniTaskStatus.Pending)
+                return;
+            AnimationHighlight().Forget();
+        }
+
+        private async UniTaskVoid AnimationHighlight()
+        {
+            _currentHighlightTask = DOTween.Sequence()
+                .Append(transform.DOScale(Vector3.one * 2f, 0.5f))
+                .Append(_textMesh.DOColor(Color.yellow, 1f))
+                .Append(_textMesh.DOColor(Color.white, 1f))
+                .Append(transform.DOScale(Vector3.one * 1f, 0.5f))
+                .Play().ToUniTask(cancellationToken: gameObject.GetCancellationTokenOnDestroy());
+                
+            await _currentHighlightTask;
+
+            _currentHighlightTask = default;
         }
 
         public override string ToString()

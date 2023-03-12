@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TestTasks.Task_1_Algorithms_And_DataStructures.Scripts.BusinessLogic;
+using TMPro;
 using UnityEngine;
 
 namespace TestTasks.Task_1_Algorithms_And_DataStructures.Scripts
@@ -10,7 +11,8 @@ namespace TestTasks.Task_1_Algorithms_And_DataStructures.Scripts
     {
         [SerializeField] private StationsSelector _selector;
         [SerializeField] private SubwaySystemView _subwaySystem;
-
+        [SerializeField] private TextMeshProUGUI _transitionsCountText;
+        
         private SubwayStationView _selectedFrom;
         private SubwayStationView _selectedTo;
 
@@ -67,7 +69,7 @@ namespace TestTasks.Task_1_Algorithms_And_DataStructures.Scripts
                 _subwaySystem.Graph.Nodes.FirstOrDefault(n => IsCanBeWrappedFromViewToModel(_selectedTo, n));
 
             var pathEdges = _subwaySystem.Graph.GenerateShortestPathByDijkstraAlgorithm(nodeFrom, nodeTo);
-            var totalNodesList = new List<GenericNode<SubwayStation>>(pathEdges.Count * 2);
+            var totalNodesList = new HashSet<GenericNode<SubwayStation>>(pathEdges.Count * 2);
 
             foreach (var edge in pathEdges)
             {
@@ -76,8 +78,26 @@ namespace TestTasks.Task_1_Algorithms_And_DataStructures.Scripts
                 if(edge.To != null)
                     totalNodesList.Add(edge.To);
             }
+
+            var transitionCount = 0;
+            EStationColorType lastStationColor = totalNodesList.FirstOrDefault()?.Data.ColorType ?? EStationColorType.NONE;
+            foreach (var node in totalNodesList)
+            {
+                if (lastStationColor != node.Data.ColorType)
+                {
+                    transitionCount++;
+                    lastStationColor = node.Data.ColorType;
+                }
+            }
+
+            if (_transitionsCountText)
+                _transitionsCountText.text = $"Transitions: {transitionCount}";
             
-            
+            var viewsCollection = NodesToView(totalNodesList);
+            foreach (var view in viewsCollection)
+            {
+                view.Highlight();
+            }
 
         }
 
@@ -85,7 +105,10 @@ namespace TestTasks.Task_1_Algorithms_And_DataStructures.Scripts
         {
             foreach (var node in nodes)
             {
-                yield break;
+                var data = node.Data;
+                var key = new ValueTuple<string, EStationColorType>(data.Label, data.ColorType);
+                
+                yield return _stationsViewMap[key];
             }
         }
 
