@@ -11,19 +11,19 @@ namespace TestTasks.Task_2_OOP_And_Design.Scripts.Modules
             _subModulesCollection = new List<ModuleBase>(modules);
         }
         
-        public override void OnStartUse()
+        public override void OnStart()
         {
             foreach (var submodule in _subModulesCollection)
             {
-                submodule.OnStartUse();
+                submodule.OnStart();
             }
         }
 
-        public override void OnStopUse()
+        public override void OnStop()
         {
             foreach (var submodule in _subModulesCollection)
             {
-                submodule.OnStopUse();
+                submodule.OnStop();
             }
         }
 

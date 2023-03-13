@@ -11,7 +11,7 @@ namespace TestTasks.Task_2_OOP_And_Design.Scripts.Modules.StatsAffectors
             _delayModifier = delayModifier;
         }
 
-        public override void OnStartUse()
+        public override void OnStart()
         {
             foreach (var weaponModule in _weaponModules)
             {
@@ -19,7 +19,7 @@ namespace TestTasks.Task_2_OOP_And_Design.Scripts.Modules.StatsAffectors
             }
         }
 
-        public override void OnStopUse()
+        public override void OnStop()
         {
             foreach (var weaponModule in _weaponModules)
             {

@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-using TestTasks.Task_2_OOP_And_Design.Scripts.Modules.StatsAffectors;
+﻿using TestTasks.Task_2_OOP_And_Design.Scripts.Modules.StatsAffectors;
 using TestTasks.Task_2_OOP_And_Design.Scripts.Vehicle;
 
 namespace TestTasks.Task_2_OOP_And_Design.Scripts.Modules.PrebuildModules
 {
-    public class ModuleC : MacroModule
+    public class ModuleC : WeaponDelayStatsAffectorModule
     {
-        public ModuleC(VehicleStats vehicleStats, IEnumerable<WeaponModule> weaponModules) : base(new WeaponDelayStatsAffectorModule(0.8f, weaponModules))
+        public ModuleC(VehicleStats vehicleStats, params WeaponModule[] weaponModules) : base( 0.8f, weaponModules)
         {
             
         }

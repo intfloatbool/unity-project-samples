@@ -3,9 +3,9 @@ using TestTasks.Task_2_OOP_And_Design.Scripts.Vehicle;
 
 namespace TestTasks.Task_2_OOP_And_Design.Scripts.Modules.PrebuildModules
 {
-    public class ModuleA : MacroModule
+    public class ModuleA : VehicleShieldValueAffectorModule
     {
-        public ModuleA(VehicleStats vehicleStats) : base(new VehicleShieldValueAffectorModule(50, vehicleStats))
+        public ModuleA(VehicleStats vehicleStats) : base(50, vehicleStats)
         {
             
         }

@@ -35,12 +35,12 @@ namespace TestTasks.Task_2_OOP_And_Design.Scripts.Modules
         }
         
 
-        public override void OnStartUse()
+        public override void OnStart()
         {
             
         }
 
-        public override void OnStopUse()
+        public override void OnStop()
         {
             
         }
@@ -78,7 +78,7 @@ namespace TestTasks.Task_2_OOP_And_Design.Scripts.Modules
                 
             }
             
-            Debug.Log($"Shoot! isTargetFound: " + isTargetFound);
+            /*Debug.Log($"Shoot! isTargetFound: " + isTargetFound);*/
         }
     }
 }

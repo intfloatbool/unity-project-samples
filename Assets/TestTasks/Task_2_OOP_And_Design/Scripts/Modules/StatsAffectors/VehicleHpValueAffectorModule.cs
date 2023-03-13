@@ -11,13 +11,13 @@ namespace TestTasks.Task_2_OOP_And_Design.Scripts.Modules.StatsAffectors
             _additionalValue = additionalValue;
         }
 
-        public override void OnStartUse()
+        public override void OnStart()
         {
             _vehicleStats.MaxHp = _vehicleStats.BaseHp + _additionalValue;
             _vehicleStats.CurrentHp = _vehicleStats.MaxHp;
         }
 
-        public override void OnStopUse()
+        public override void OnStop()
         {
             _vehicleStats.MaxHp = _vehicleStats.BaseHp;
             _vehicleStats.CurrentHp = _vehicleStats.MaxHp;

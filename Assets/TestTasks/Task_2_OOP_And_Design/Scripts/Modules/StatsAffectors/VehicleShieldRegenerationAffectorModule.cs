@@ -1,4 +1,5 @@
 ﻿using TestTasks.Task_2_OOP_And_Design.Scripts.Vehicle;
+using UnityEngine;
 
 namespace TestTasks.Task_2_OOP_And_Design.Scripts.Modules.StatsAffectors
 {
@@ -11,13 +12,14 @@ namespace TestTasks.Task_2_OOP_And_Design.Scripts.Modules.StatsAffectors
             _shieldRegenerationModifier = shieldRegenerationModifier;
         }
 
-        public override void OnStartUse()
+        public override void OnStart()
         {
             _vehicleStats.CurrentShieldRegenerationPerSecond =
                 _vehicleStats.BaseShieldRegenerationPerSecond * _shieldRegenerationModifier;
+
         }
 
-        public override void OnStopUse()
+        public override void OnStop()
         {
             _vehicleStats.CurrentShieldRegenerationPerSecond =
                 _vehicleStats.BaseShieldRegenerationPerSecond;
