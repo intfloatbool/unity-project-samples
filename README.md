@@ -3,6 +3,8 @@ Test task for the company "Game-Labs" from Vladimir Khanyakin ( intfloatbool )
 
 Unity Version: 2021.3.13f1
 
+#Unity #OOP #CPU #GPU #PROCEDURAL #ALGORITHMS
+
 Test tasks:
 
 ## 1 - Procedural Generation and manipulation using CPU and GPU
