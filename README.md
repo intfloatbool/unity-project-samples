@@ -1,11 +1,9 @@
-# vladimir-ifb-game-labs-test-task-03-2023
-Test task for the company "Game-Labs" from Vladimir Khanyakin ( intfloatbool )
-
+# Unity Project Samples
 Unity Version: 2021.3.13f1
 
 #Unity #OOP #CPU #GPU #PROCEDURAL #ALGORITHMS
 
-Test tasks:
+Samples:
 
 ## 1 - Procedural Generation and manipulation using CPU and GPU
   ![Alt text](/Screens/Task_0_Procedural_generation_0.jpg "Optional Title")
